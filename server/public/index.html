@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SmartRoom — Dashboard</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="topbar__title">
+      <div class="icon-badge icon-badge--brand">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 11.5L12 4l9 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M5 10.5V20h14v-9.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M10 20v-5h4v5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>SmartRoom</h1>
+        <p class="topbar__subtitle">Chambre intelligente — pilier 3.C EnergyTech &amp; SmartGrid</p>
+      </div>
+    </div>
+    <div class="topbar__status">
+      <div class="clock" id="clock">--:--:--</div>
+      <div class="last-update" id="lastUpdate">En attente de données…</div>
+      <div class="connection" id="connectionStatus">
+        <span class="dot"></span>
+        <span class="connection__label">Connexion…</span>
+      </div>
+    </div>
+  </header>
+
+  <div class="banner banner--crisis hidden" id="crisisBanner">
+    ⚡ Mode crise énergétique actif — seuils de confort élargis, appareils non essentiels priorisés.
+  </div>
+  <div class="banner banner--thermal hidden" id="thermalBanner">
+    🌡️ Urgence thermique — température supérieure au seuil de sécurité, climatisation forcée.
+  </div>
+  <div class="banner banner--reserve hidden" id="reserveBanner">
+    🔋 COUPURE D'URGENCE — réserve de secours épuisée, tous les équipements non vitaux sont coupés.
+  </div>
+
+  <main class="layout">
+
+    <section class="status-strip">
+      <div class="chip" id="chipSystem">
+        <span class="chip__label">Système</span>
+        <span class="chip__value">Nominal</span>
+      </div>
+      <div class="chip" id="chipPresence">
+        <span class="chip__label">Présence</span>
+        <span class="chip__value">—</span>
+      </div>
+      <div class="chip" id="chipTemp">
+        <span class="chip__label">Température</span>
+        <span class="chip__value">—</span>
+      </div>
+      <div class="chip" id="chipHumidity">
+        <span class="chip__label">Humidité</span>
+        <span class="chip__value">—</span>
+      </div>
+    </section>
+
+    <section class="card-grid">
+      <div class="card">
+        <div class="icon-badge icon-badge--presence">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M5 20c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <span class="card__label">Présence</span>
+          <span class="card__value" id="cardPresence">—</span>
+          <span class="card__hint" id="cardPresenceHint">Capteur ultrason HC-SR04</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="icon-badge icon-badge--temp">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3a2.5 2.5 0 0 1 2.5 2.5v8.55a4.5 4.5 0 1 1-5 0V5.5A2.5 2.5 0 0 1 12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <circle cx="12" cy="17.5" r="1.6" fill="currentColor"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <span class="card__label">Température</span>
+          <span class="card__value" id="cardTemp">—</span>
+          <span class="card__hint" id="cardTempHint">Capteur DHT22</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="icon-badge icon-badge--humidity">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3.5s6.5 7.2 6.5 11.6a6.5 6.5 0 1 1-13 0C5.5 10.7 12 3.5 12 3.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="card__body">
+          <span class="card__label">Humidité</span>
+          <span class="card__value" id="cardHumidity">—</span>
+          <span class="card__hint" id="cardHumidityHint">Capteur DHT22</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-grid">
+      <div class="panel">
+        <div class="panel__header">
+          <div class="icon-badge icon-badge--energy"><span>⚡</span></div>
+          <div>
+            <h2>Énergie</h2>
+            <p class="panel__subtitle">Production nucléaire + réserve de secours</p>
+          </div>
+        </div>
+        <div class="energy-grid">
+          <div class="energy-stat">
+            <span class="energy-stat__label">Consommation actuelle</span>
+            <span class="energy-stat__value" id="energyCurrent">— W</span>
+          </div>
+          <div class="energy-stat">
+            <span class="energy-stat__label">Production actuelle</span>
+            <span class="energy-stat__value" id="energyProduction">— W</span>
+          </div>
+        </div>
+        <div class="reserve-block">
+          <div class="reserve-block__header">
+            <span>Réserve de secours</span>
+            <span id="reserveValue">—%</span>
+          </div>
+          <div class="bar">
+            <div class="bar__fill" id="reserveBar" style="width:0%"></div>
+          </div>
+        </div>
+        <div class="energy-grid energy-grid--secondary">
+          <div class="energy-stat">
+            <span class="energy-stat__label">Consommation estimée</span>
+            <span class="energy-stat__value" id="energyEstimated">— Wh</span>
+          </div>
+          <div class="energy-stat">
+            <span class="energy-stat__label">Économie vs. tout allumé</span>
+            <span class="energy-stat__value energy-stat__value--eco" id="energySavings">—%</span>
+          </div>
+          <div class="energy-stat">
+            <span class="energy-stat__label">Coût estimé</span>
+            <span class="energy-stat__value" id="energyCost">— €</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="icon-badge icon-badge--conditions"><span>📈</span></div>
+          <div>
+            <h2>Conditions</h2>
+            <p class="panel__subtitle">Historique récent (température / humidité)</p>
+          </div>
+        </div>
+        <div class="sparkline-row">
+          <div class="sparkline-row__label">
+            <span>Température</span>
+            <span id="sparklineTempValue">—</span>
+          </div>
+          <svg class="sparkline" id="sparklineTemp" viewBox="0 0 300 60" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="sparkline-row">
+          <div class="sparkline-row__label">
+            <span>Humidité</span>
+            <span id="sparklineHumidityValue">—</span>
+          </div>
+          <svg class="sparkline" id="sparklineHumidity" viewBox="0 0 300 60" preserveAspectRatio="none"></svg>
+        </div>
+        <div class="comfort-legend">
+          <span class="comfort-legend__item"><i class="dot dot--comfort"></i>Zone de confort</span>
+          <span class="comfort-legend__item"><i class="dot dot--danger"></i>Seuil de danger</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-grid">
+      <div class="panel">
+        <div class="panel__header">
+          <div class="icon-badge icon-badge--generation"><span>🚲</span></div>
+          <div>
+            <h2>Génération d'énergie</h2>
+            <p class="panel__subtitle">Sources bonus, en complément du nucléaire</p>
+          </div>
+        </div>
+        <div class="generation-row">
+          <div class="generation-row__info">
+            <strong>Vélo générateur</strong>
+            <span>+100 W tant qu'il est actionné</span>
+          </div>
+          <span class="badge" id="bikeStatusBadge">Inactif</span>
+        </div>
+        <div class="generation-row">
+          <div class="generation-row__info">
+            <strong>Récupération thermoélectrique</strong>
+            <span>+25 W quand la climatisation/chauffage fonctionne</span>
+          </div>
+          <span class="badge" id="thermoStatusBadge">Inactif</span>
+        </div>
+        <div class="generation-total">
+          <span>Total généré</span>
+          <strong id="generationTotal">0 W</strong>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="icon-badge icon-badge--support"><span>🌬️</span></div>
+          <div>
+            <h2>Support de vie</h2>
+            <p class="panel__subtitle">Ventilation — jamais totalement coupée</p>
+          </div>
+        </div>
+        <div class="support-status">
+          <span class="support-status__label">Mode actuel</span>
+          <span class="badge" id="supportModeBadge">Normal</span>
+        </div>
+        <p class="support-note" id="supportNote">Ventilation à puissance normale (40 W).</p>
+        <div class="support-note support-note--emergency hidden" id="emergencyNote">
+          Coupure d'urgence : seul le support de vie reste alimenté (mode éco, 15 W).
+        </div>
+      </div>
+    </section>
+
+    <section class="panel-grid">
+      <div class="panel">
+        <div class="panel__header">
+          <div class="icon-badge icon-badge--eclairage"><span>💡</span></div>
+          <div>
+            <h2>Éclairage</h2>
+            <p class="panel__subtitle">Auto (présence + nuit) ou forçage manuel</p>
+          </div>
+        </div>
+        <div class="device-list" id="listEclairage"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="icon-badge icon-badge--appareils"><span>🖥️</span></div>
+          <div>
+            <h2>Appareils</h2>
+            <p class="panel__subtitle">Climatisation / chauffage &amp; divertissement</p>
+          </div>
+        </div>
+        <div class="device-list" id="listAppareils"></div>
+      </div>
+    </section>
+
+    <section class="panel-grid">
+      <div class="panel">
+        <div class="panel__header">
+          <div class="icon-badge icon-badge--log"><span>📝</span></div>
+          <div>
+            <h2>Journal</h2>
+            <p class="panel__subtitle">Derniers événements système</p>
+          </div>
+        </div>
+        <ul class="log-list" id="logList"></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel__header">
+          <div class="icon-badge icon-badge--demo"><span>🎛️</span></div>
+          <div>
+            <h2>Démo &amp; scénarios</h2>
+            <p class="panel__subtitle">Simuler des conditions pour la soutenance</p>
+          </div>
+        </div>
+        <div class="demo-controls">
+          <button class="btn btn--toggle" id="toggleCrisis">Mode crise énergétique</button>
+          <button class="btn btn--toggle" id="toggleNight">Simuler la nuit</button>
+          <button class="btn btn--toggle" id="toggleBike">Vélo générateur</button>
+        </div>
+        <p class="demo-hint">Ces boutons pilotent le vrai serveur — l'effet est immédiat sur tous les autres blocs du dashboard.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

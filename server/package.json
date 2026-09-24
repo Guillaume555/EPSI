@@ -1,0 +1,14 @@
+{
+  "name": "smartroom-server",
+  "version": "1.0.0",
+  "description": "Serveur SmartRoom (dashboard + logique énergétique) — Workshop National B3 Horizon 2080, pilier 3.C",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "fake-sensor": "node test-fake-sensor.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "ws": "^8.17.0"
+  }
+}
